@@ -8,4 +8,4 @@ set(CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std:c++latest")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory("day01")
-
+add_subdirectory("day02")
