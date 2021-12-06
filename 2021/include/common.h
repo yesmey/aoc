@@ -6,6 +6,7 @@
 #include <vector>
 #include <array>
 #include <map>
+#include <unordered_map>
 #include <set>
 #include <ranges>
 #include <fstream>
@@ -15,6 +16,8 @@
 #include <string_view>
 #include <charconv>
 #include <utility>
+#include <cassert>
+
 
 typedef int8_t i8;
 typedef uint8_t u8;
