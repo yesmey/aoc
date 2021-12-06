@@ -1,6 +1,6 @@
 #include <common.h>
 
-using FishStates = std::unordered_map<u64, u64>;
+using FishStates = std::map<u64, u64>;
 
 auto parse_input() {
     std::vector<u64> result;
@@ -28,22 +28,25 @@ FishStates initialize_fish_states(const std::vector<u64>& input) {
     return fish_states;
 }
 
+FishStates run_iteration(const FishStates& old_state) {
+    FishStates new_fish_state;
+    for (auto&& [stage, fish_count] : old_state) {
+        if (stage == 0) {
+            new_fish_state[6] += fish_count; // we are now parents
+            new_fish_state[8] += fish_count; // spawn our new babies
+        }
+        else {
+            new_fish_state[stage - 1] += fish_count;
+        }
+    }
+    return new_fish_state;
+}
+
 template <i32 days>
 u64 run_iterations(const std::vector<u64>& input) {
     auto fish_states = initialize_fish_states(input);
     for (i32 i = 0; i < days; i++) {
-        FishStates new_fish_state;
-        for (auto&& [stage, fish_count] : fish_states) {
-            if (stage == 0) {
-                new_fish_state[6] += fish_count; // we are now parents
-                new_fish_state[8] += fish_count; // spawn our new babies
-            }
-            else {
-                new_fish_state[stage - 1] += fish_count;
-            }
-        }
-
-        fish_states = new_fish_state;
+        fish_states = run_iteration(fish_states);
     }
 
     // summarize the fishes in all states
