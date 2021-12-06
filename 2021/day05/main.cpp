@@ -6,45 +6,51 @@ struct VentCoordinate {
     std::vector<Coordinate> points;
 };
 
-auto parse_input(bool diagonal) {
+const Coordinate parse_coordinate(const std::string& str) {
+    const auto comma = str.find(',');
+    return { std::stoi(str.substr(0, comma)), std::stoi(str.substr(comma + 1)) };
+}
+
+auto parse_input() {
     std::ifstream ifs("input");
     std::vector<std::string> vec;
     ranges::copy(ranges::istream_view<std::string>(ifs), std::back_inserter(vec));
+    return vec;
+}
 
+template <bool include_diagonal>
+auto calculate_coordinates(const std::vector<std::string>& vec) {
     std::vector<VentCoordinate> result;
+    result.reserve(vec.size() / 3);
     for (int i = 0; i < vec.size(); i += 3) {
-        auto comma = vec[i].find(",");
-        Coordinate point1{};
-        point1.first = std::stoi(vec[i].substr(0, comma));
-        point1.second = std::stoi(vec[i].substr(comma + 1));
-
-        auto comma2 = vec[i + 2].find(",");
-        Coordinate point2{};
-        point2.first = std::stoi(vec[i + 2].substr(0, comma2));
-        point2.second = std::stoi(vec[i + 2].substr(comma2 + 1));
+        const auto [x1, y1] = parse_coordinate(vec[i]);
+        const auto [x2, y2] = parse_coordinate(vec[i + 2]);
 
         std::vector<Coordinate> points;
-        if (point1.first == point2.first) {
+        if (x1 == x2) {
             // vertical line
-            auto [start, end] = std::minmax(point1.second, point2.second);
+            auto [start, end] = std::minmax(y1, y2);
+            points.reserve((end - start) + 1);
             for (auto i = start; i <= end; i++) {
-                points.push_back({ point1.first, i });
+                points.push_back({ x1, i });
             }
         }
-        else if (point1.second == point2.second) {
+        else if (y1 == y2) {
             // horizontal line
-            auto [start, end] = std::minmax(point1.first, point2.first);
+            auto [start, end] = std::minmax(x1, x2);
+            points.reserve((end - start) + 1);
             for (auto i = start; i <= end; i++) {
-                points.push_back({ i, point1.second });
+                points.push_back({ i, y1 });
             }
         }
-        else if (diagonal) {
+        else if (include_diagonal) {
             // diagonal
-            auto xDirection = point1.first < point2.first ? 1 : -1;
-            auto yDirection = point1.second < point2.second ? 1 : -1;
-            auto to = std::abs(point1.first - point2.first);
+            auto xDirection = x1 < x2 ? 1 : -1;
+            auto yDirection = y1 < y2 ? 1 : -1;
+            auto to = std::abs(x1 - x2);
+            points.reserve(to + 1);
             for (auto i = 0; i <= to; i++) {
-                points.push_back({ point1.first + (i * xDirection), point1.second + (i * yDirection) });
+                points.push_back({ x1 + (i * xDirection), y1 + (i * yDirection) });
             }
         }
 
@@ -54,7 +60,7 @@ auto parse_input(bool diagonal) {
     return result;
 }
 
-u32 first_solution(const std::vector<VentCoordinate>& input) {
+u32 calculate_intersects(const std::vector<VentCoordinate>& input) {
     std::set<Coordinate> overlapped;
     std::set<Coordinate> all_points;
     for (auto&& coordinate : input) {
@@ -72,15 +78,16 @@ u32 first_solution(const std::vector<VentCoordinate>& input) {
 }
 
 int main() {
+    const auto input = parse_input();
     {
-        auto input = parse_input(false);
-        const auto first = first_solution(input);
+        auto coordinates = calculate_coordinates<false>(input);
+        const auto first = calculate_intersects(coordinates);
         std::cout << "first answer: " << first << std::endl;
     }
 
     {
-        auto input = parse_input(true);
-        const auto second = first_solution(input);
+        auto coordinates = calculate_coordinates<true>(input);
+        const auto second = calculate_intersects(coordinates);
         std::cout << "second answer: " << second << std::endl;
     }
 
