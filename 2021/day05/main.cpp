@@ -22,6 +22,8 @@ template <bool include_diagonal>
 auto calculate_coordinates(const std::vector<std::string>& vec) {
     std::vector<VentCoordinate> result;
     result.reserve(vec.size() / 3);
+
+    // each string in vec is not a row, each row is separated by whitespace into three vec strings
     for (int i = 0; i < vec.size(); i += 3) {
         const auto [x1, y1] = parse_coordinate(vec[i]);
         const auto [x2, y2] = parse_coordinate(vec[i + 2]);
