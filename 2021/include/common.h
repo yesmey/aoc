@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <optional>
 #include <limits>
+#include <string_view>
+#include <charconv>
 #include <utility>
 
 typedef int8_t i8;
@@ -34,3 +36,10 @@ template <typename R, typename T>
 concept input_range_of =
 	std::ranges::input_range<R> &&
 	std::convertible_to<std::ranges::range_value_t<R>, T>;
+
+const i64 convert_to_int(std::string_view sv)
+{
+    i64 result;
+    std::from_chars(sv.data(), sv.data() + sv.size(), result);
+    return result;
+}
