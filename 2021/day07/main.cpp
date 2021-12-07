@@ -34,7 +34,7 @@ auto first_solution(const std::vector<i64>& input) {
     return min_fuel;
 }
 
-auto second_solution(const std::vector<i64>& input) {
+i64 second_solution(const std::vector<i64>& input) {
     i64 max = *std::max_element(input.begin(), input.end());
 
     i64 min_fuel = std::numeric_limits<i64>::max();
@@ -42,10 +42,7 @@ auto second_solution(const std::vector<i64>& input) {
         i64 fuel = 0;
         for (i64 num : input) {
             auto distance = std::abs(num - i);
-            for (i64 j = 1; j < distance; j++) {
-                fuel += j;
-            }
-            fuel += distance;
+            fuel += (distance * (distance + 1) / 2);
         }
 
         min_fuel = std::min(min_fuel, fuel);
@@ -59,11 +56,13 @@ int main() {
 
     {
         const auto first = first_solution(input);
+        assert(first == 336721);
         std::cout << "first answer: " << first << std::endl;
     }
 
     {
         const auto second = second_solution(input);
+        assert(second == 91638945);
         std::cout << "second answer: " << second << std::endl;
     }
 
