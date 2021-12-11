@@ -134,6 +134,7 @@ u32 second_solution(const Grid& input) {
         }
     }
 
+    return largest_basins[0] * largest_basins[1] * largest_basins[2];
 }
 
 int main() {
